@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#F5F1EA" />
 <meta name="supported-color-schemes" content="light" />
 <title>Aaron Wilkinson — Finance, data, and the tools between them</title>
-<meta name="description" content="Aaron Wilkinson builds the systems finance teams run on. Fifteen years across banking, wealth management, fintech product, and platform engineering." />
+<meta name="description" content="Aaron Wilkinson builds the systems finance teams run on. Seventeen years across banking, wealth management, fintech product, and platform engineering." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -107,6 +107,7 @@
     font-size: 20px;
     letter-spacing: -0.01em;
     font-variation-settings: "opsz" 144;
+    white-space: nowrap;
   }
 
   .nav-mark span {
@@ -695,6 +696,34 @@
     margin: 0 auto;
   }
 
+  .contact-meta a, .hero-meta a { border-bottom: 1px solid var(--ochre); padding-bottom: 1px; }
+  .project h4 a { border-bottom: 1px solid transparent; }
+  .project h4 a:hover { border-bottom-color: var(--ochre); opacity: 1; }
+
+  @media (hover: none) {
+    .work-item:hover { padding-left: 0; }
+    .work-arrow { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .nav { align-items: center; }
+    .nav-mark { font-size: 17px; }
+    .nav-links { gap: 14px; font-size: 10px; letter-spacing: 0.04em; }
+    .hero-meta { gap: 20px 32px; }
+    .project { padding: 28px 22px; min-height: 0; }
+    .cred { padding: 24px 22px; }
+    .contact { padding: 100px 24px 60px; }
+    .contact-link { font-size: 20px; word-break: break-all; }
+    footer { padding: 24px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .hero-eyebrow, .hero h1 .first, .hero h1 .last, .hero-tag, .hero-meta, .hero-decoration { animation: none; opacity: 1; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .work-item, .work-arrow, .project, a { transition: none; }
+  }
+
   /* Reveal on scroll */
   .reveal {
     opacity: 0;
@@ -728,10 +757,11 @@
       <span class="last">Wilkinson.</span>
     </h1>
     <p class="hero-tag">
-      Finance, data, and the <em>tools between them.</em> Fifteen years across banking, wealth management, fintech product, and platform engineering — building the systems finance teams actually run on.
+      Finance, data, and the <em>tools between them.</em> Seventeen years across banking, wealth management, fintech product, and platform engineering — building the systems finance teams actually run on.
     </p>
     <div class="hero-meta">
       <div>Currently <span>Cardone Ventures</span></div>
+      <div>Also <span><a href="https://www.adeptadvisors.com" target="_blank" rel="noopener">Adept Advisors</a></span></div>
       <div>Discipline <span>Finance · Data · Software</span></div>
       <div>Stack <span>Fabric · Azure · React · Swift</span></div>
     </div>
@@ -756,6 +786,7 @@
         <p>From there I went to <strong>Merrill Lynch</strong>, passed the Series 7, 66, and 63, and worked as a financial advisor in Anchorage. Then to <strong>Empirical Wealth Management</strong>, a fee-only RIA, where the work was more aligned with how I think about a client's interests. Somewhere in there I finished an MBA at the University of Maryland.</p>
         <p>In 2018 I went independent, and three years of consulting eventually landed me at <strong>equipifi</strong>, where I went from contractor to Lead Product Manager for Underwriting. I built their consumer underwriting model from scratch — algorithms, data mappings to five core banking systems, point-of-sale credit decisioning. It was the first time I had to learn the technical stack as deeply as the financial logic, and it changed how I work.</p>
         <p>Today I'm at <strong>Cardone Ventures</strong>, functioning as a one-person data department inside the finance function. I write the SQL, design the Power BI, ship the React, and stand up the Azure infrastructure. Finance fluency, full-stack execution, <em>no translation layer.</em></p>
+        <p>On the side I run <strong>Adept Advisors</strong>, a small AI consultancy for owner-operated businesses. The model is forward-deployed: sit inside the business, find the two or three workflows where AI actually pays for itself, and build them.</p>
       </div>
     </div>
   </section>
@@ -766,8 +797,8 @@
 
   <section id="work">
     <div class="section-header">
-      <div class="section-num">§ 02 — Selected Work</div>
-      <h2 class="section-title">Production work, <em>built and shipped.</em></h2>
+      <div class="section-num">§ 02 — Work</div>
+      <h2 class="section-title">Things I've built, <em>and where.</em></h2>
     </div>
 
     <div class="work-list">
@@ -781,7 +812,7 @@
         <div class="work-content">
           <h3>The internal <em>operating system</em> for finance and business services.</h3>
           <p>Functioning as a one-person data department, I own the analytics platform, executive reporting, and a growing suite of internal applications used daily by leadership and the business services team. Six production apps shipped, a Microsoft Fabric warehouse stood up, and a 12-month platform architecture roadmap authored from scratch.</p>
-          <p>Highlights include the <strong>Client Financial Package</strong> (a 24-view React app simulating P&amp;L, balance sheet, cash flow, breakeven, and ODE across five client profiles), the <strong>Business Services Customer View Hub</strong>, the <strong>Fabric NL Query App</strong> (natural-language to T-SQL with an Azure Functions backend), and the <strong>QBO Categorizer</strong> for programmatic chart-of-accounts work via QuickBooks Online's API.</p>
+          <p>Highlights include the <strong>Client Financial Package</strong> (a 24-view React app simulating P&amp;L, balance sheet, cash flow, breakeven, and ODE across five client profiles), the <strong>Business Services Customer View Hub</strong>, the <strong>Fabric NL Query App</strong> (natural-language to T-SQL with an Azure Functions backend), a <strong>Fabric-to-Google Sheets sync pipeline</strong> so the finance team can work in the tool they already live in, and the <strong>QBO Categorizer</strong> for programmatic chart-of-accounts work via QuickBooks Online's API.</p>
           <div class="work-tags">
             <span class="work-tag">Microsoft Fabric</span>
             <span class="work-tag">Power BI / DAX</span>
@@ -817,52 +848,20 @@
 
       <article class="work-item">
         <div class="work-meta">
-          <strong>Wilkinson Consulting</strong>
-          2018 — 2022<br>
-          Independent
-        </div>
-        <div class="work-content">
-          <h3>Three years going independent, retooling for what came next.</h3>
-          <p>Took on product, finance, and data work as a sole proprietor. Used the time to teach myself SQL, Python, data architecture, and the kind of software thinking that doesn't come standard with a finance background. The final engagement with equipifi started here as a three-month contract before converting to full time.</p>
-          <span class="work-arrow">→</span>
-        </div>
-      </article>
-
-      <article class="work-item">
-        <div class="work-meta">
-          <strong>Empirical Wealth Mgmt</strong>
-          2017 — 2018<br>
-          Financial Advisor
-        </div>
-        <div class="work-content">
-          <h3>Fee-only RIA work, fiduciary by structure.</h3>
-          <p>Advised clients on financial planning, investment management, and portfolio construction at a Seattle-based RIA serving high-net-worth individuals and families. Held concurrent registration with Directional Financial Services for a specific client segment.</p>
-          <span class="work-arrow">→</span>
-        </div>
-      </article>
-
-      <article class="work-item">
-        <div class="work-meta">
-          <strong>Merrill Lynch</strong>
-          2014 — 2017<br>
-          Financial Advisor
-        </div>
-        <div class="work-content">
-          <h3>Practice Management Development, then a book of my own.</h3>
-          <p>Selected for Merrill's PMD program. Passed Series 7, Series 66, and Series 63 in the first months, then promoted to Financial Advisor and built a book from scratch. Learned how to talk to people about money in a way that respects what's actually at stake for them.</p>
-          <span class="work-arrow">→</span>
-        </div>
-      </article>
-
-      <article class="work-item">
-        <div class="work-meta">
-          <strong>First National Bank Alaska</strong>
-          2009 — 2013<br>
-          Branch Mgr → Loan Officer → MA
+          <strong>Before software</strong>
+          2009 — 2018<br>
+          Banking &amp; Wealth Management
         </div>
         <div class="work-content">
           <h3>Where I learned how money <em>actually moves.</em></h3>
-          <p>Three roles in four years across multiple Alaska branches. Branch Manager in Sitka running full operations. Loan Officer in Soldotna underwriting consumer and small-business credit. Started in the Management Associate rotational program. The foundation everything else rests on.</p>
+          <p>Nine years on the finance side before I wrote production code. A management associate program, a loan officer desk, and a branch manager role at First National Bank Alaska. Then Merrill Lynch, where I passed the Series 7, 66, and 63 and built a book from scratch, and a fee-only RIA where the work was fiduciary by structure. Sitting across the desk from people borrowing, lending, and investing is the foundation everything else rests on.</p>
+          <p>I went independent in 2018 and spent three years consulting while teaching myself SQL, Python, and data architecture. The last of those engagements became the equipifi role above.</p>
+          <div class="work-tags">
+            <span class="work-tag">Credit &amp; Underwriting</span>
+            <span class="work-tag">Financial Planning</span>
+            <span class="work-tag">Branch Operations</span>
+            <span class="work-tag">Series 7 · 66 · 63</span>
+          </div>
           <span class="work-arrow">→</span>
         </div>
       </article>
@@ -880,6 +879,22 @@
 
       <article class="project">
         <div class="project-num">PROJECT — 01</div>
+        <h4>Cadence Hub</h4>
+        <div class="project-sub">Multi-tenant payroll automation for fitness studios</div>
+        <p>Turns Mariana Tek class and instructor data into payroll runs for studio operators. Multi-tenant from day one, with envelope encryption per tenant, an OAuth broker pattern for studio connections, and QStash fan-out for the heavy lifting.</p>
+        <div class="project-stack">Next.js · Neon Postgres · QStash · Vercel</div>
+      </article>
+
+      <article class="project">
+        <div class="project-num">PROJECT — 02</div>
+        <h4>Report Gen</h4>
+        <div class="project-sub">Power BI reports from plain English</div>
+        <p>Describe the report you want; get a real Power BI artifact back. Claude plans the report, the pipeline introspects the semantic model (TMSL/TMDL), validates the plan against it with retry loops, and polls the long-running publish job to completion.</p>
+        <div class="project-stack">TypeScript · Fastify · React · Claude API</div>
+      </article>
+
+      <article class="project">
+        <div class="project-num">PROJECT — 03</div>
         <h4>Pulse</h4>
         <div class="project-sub">An AI CFO for small business — iOS</div>
         <p>Native Swift &amp; SwiftUI app with QuickBooks Online OAuth, Claude API briefings, Supabase persistence, StoreKit 2, Plaid, and a 28-platform connections hub. Built for solo operators who can't afford a fractional CFO but still need one.</p>
@@ -887,7 +902,7 @@
       </article>
 
       <article class="project">
-        <div class="project-num">PROJECT — 02</div>
+        <div class="project-num">PROJECT — 04</div>
         <h4>VaultSync</h4>
         <div class="project-sub">Personal account aggregator — no Plaid required</div>
         <p>Puppeteer-based headless scraping with a Node/Express backend, SQLite, and AES-256-GCM encryption. Custom connectors including a dedicated one for the Alkami ORB platform. Direct connections to my own accounts without paying a third party.</p>
@@ -895,15 +910,15 @@
       </article>
 
       <article class="project">
-        <div class="project-num">PROJECT — 03</div>
-        <h4>Genesis Studio</h4>
-        <div class="project-sub">Local AI video generation — Apple Silicon</div>
-        <p>React frontend with a Python FastAPI backend wrapping HuggingFace Diffusers, optimized for the MPS backend on a 2023 MacBook Pro. Built to run wan22-5b without a cloud bill.</p>
-        <div class="project-stack">React · FastAPI · Diffusers · MPS</div>
+        <div class="project-num">PROJECT — 05</div>
+        <h4>Vector Stage</h4>
+        <div class="project-sub">Prompt-driven SVG animation studio</div>
+        <p>Describe a scene, get an animated SVG. Animations are expressed as a JSON spec that the renderer interprets, with a library of pre-built character rigs so prompts can compose motion instead of drawing it from scratch.</p>
+        <div class="project-stack">React · SVG · JSON Spec · Claude API</div>
       </article>
 
       <article class="project">
-        <div class="project-num">PROJECT — 04</div>
+        <div class="project-num">PROJECT — 06</div>
         <h4>Polymarket Framework</h4>
         <div class="project-sub">Algorithmic trading research</div>
         <p>Python framework covering arbitrage, market making, event-driven, and model-based strategies. Risk governance and execution layers built in. Started as curiosity, became a serious sandbox.</p>
@@ -911,19 +926,19 @@
       </article>
 
       <article class="project">
-        <div class="project-num">PROJECT — 05</div>
-        <h4>Peptide Pal</h4>
-        <div class="project-sub">SwiftUI supplement protocol tracker</div>
-        <p>Dose logging, reconstitution calculator, inventory tracking, and a built-in peptide reference library. Deployed via XcodeGen and Fastlane. Niche, but useful for the people who use it.</p>
-        <div class="project-stack">SwiftUI · XcodeGen · Fastlane</div>
+        <div class="project-num">PROJECT — 07</div>
+        <h4>Genesis Studio</h4>
+        <div class="project-sub">Local AI video generation — Apple Silicon</div>
+        <p>React frontend with a Python FastAPI backend wrapping HuggingFace Diffusers, optimized for the MPS backend on a 2023 MacBook Pro. Built to run wan22-5b without a cloud bill.</p>
+        <div class="project-stack">React · FastAPI · Diffusers · MPS</div>
       </article>
 
       <article class="project">
-        <div class="project-num">PROJECT — 06</div>
-        <h4>Internal MCP Server</h4>
-        <div class="project-sub">Custom company-data layer for AI</div>
-        <p>An MCP server exposing company data and a custom learning layer to AI assistants. Lets me query and reason over internal information conversationally instead of pulling reports manually.</p>
-        <div class="project-stack">MCP · TypeScript · Custom Embeddings</div>
+        <div class="project-num">PROJECT — 08</div>
+        <h4>Rogue Defense</h4>
+        <div class="project-sub">A neon terrain shooter in the browser</div>
+        <p>Destructible terrain, particle-heavy neon rendering, and a wave-based defense loop, all on a raw canvas with no game engine. Built with my kids in mind, which is a demanding QA team.</p>
+        <div class="project-stack">React · Canvas · TypeScript</div>
       </article>
 
     </div>
@@ -953,7 +968,7 @@
         <div class="cred-label">FINRA</div>
         <div class="cred-content">
           Series 7 · 66 · 63
-          <em>Held while registered · CRD #6365152</em>
+          <em>Held 2014 through 2018</em>
         </div>
       </div>
     </div>
@@ -961,12 +976,12 @@
 
   <section id="contact" class="contact">
     <div class="contact-eyebrow">§ 05 — Contact</div>
-    <h2>Let's <em>talk.</em></h2>
+    <h2>Say <em>hello.</em></h2>
     <a class="contact-link" href="mailto:aaronjohnwilkinson@gmail.com">aaronjohnwilkinson@gmail.com</a>
     <div class="contact-meta">
       <div>Phoenix, AZ</div>
-      <div>(907) 529-0883</div>
-      <div>Open to: Director / Principal IC roles</div>
+      <div><a href="https://github.com/AJWilkinson85" target="_blank" rel="noopener">GitHub</a></div>
+      <div><a href="https://www.adeptadvisors.com" target="_blank" rel="noopener">Adept Advisors</a></div>
     </div>
   </section>
 
