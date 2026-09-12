@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light only" />
+<meta name="theme-color" content="#F5F1EA" />
+<meta name="supported-color-schemes" content="light" />
+<title>Aaron Wilkinson — Finance, data, and the tools between them</title>
+<meta name="description" content="Aaron Wilkinson builds the systems finance teams run on. Fifteen years across banking, wealth management, fintech product, and platform engineering." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F5F1EA;
+    --paper-warm: #EDE7DC;
+    --ink: #0F0F0F;
+    --ink-soft: #2A2A2A;
+    --muted: #6E6960;
+    --rule: #D9D2C5;
+    --navy: #1A2B4A;
+    --ochre: #B8954A;
+    --terracotta: #A14B2C;
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --body: 'Manrope', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --maxw: 1180px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light only;
+    background-color: #F5F1EA !important;
+  }
+
+  /* Defensive: forcibly override any user-agent dark mode */
+  @media (prefers-color-scheme: dark) {
+    html, body {
+      background-color: #F5F1EA !important;
+      color: #0F0F0F !important;
+    }
+  }
+
+  body {
+    background-color: #F5F1EA !important;
+    color: #0F0F0F !important;
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--navy); color: var(--paper); }
+
+  a { color: inherit; text-decoration: none; transition: opacity .2s ease; }
+  a:hover { opacity: .65; }
+
+  /* Subtle paper grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(184, 149, 74, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(26, 43, 74, 0.03) 0%, transparent 50%);
+    z-index: 1;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .08;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    z-index: 1;
+  }
+
+  main, header, footer { position: relative; z-index: 2; }
+
+  /* ===== NAV ===== */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(245,241,234,.95) 0%, rgba(245,241,234,.6) 70%, transparent 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .nav-mark {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    font-variation-settings: "opsz" 144;
+  }
+
+  .nav-mark span {
+    color: var(--ochre);
+    font-style: italic;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  @media (max-width: 720px) {
+    .nav { padding: 18px 24px; }
+    .nav-links { gap: 18px; font-size: 11px; }
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    padding: 120px 40px 80px;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    animation: fadeUp .9s ease .2s forwards;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 36px;
+    height: 1px;
+    background: var(--ochre);
+  }
+
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 0;
+    font-size: clamp(64px, 12vw, 168px);
+    line-height: .92;
+    letter-spacing: -0.04em;
+    margin-bottom: 36px;
+    color: var(--ink);
+  }
+
+  .hero h1 .first {
+    display: block;
+    opacity: 0;
+    animation: fadeUp 1s ease .4s forwards;
+  }
+
+  .hero h1 .last {
+    display: block;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--navy);
+    opacity: 0;
+    animation: fadeUp 1s ease .55s forwards;
+  }
+
+  .hero-tag {
+    font-family: var(--display);
+    font-size: clamp(20px, 2.6vw, 30px);
+    line-height: 1.35;
+    font-weight: 300;
+    max-width: 720px;
+    color: var(--ink-soft);
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 1s ease .75s forwards;
+  }
+
+  .hero-tag em {
+    font-style: italic;
+    color: var(--terracotta);
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 1s ease .9s forwards;
+  }
+
+  .hero-meta div span {
+    display: block;
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 14px;
+    letter-spacing: 0;
+    text-transform: none;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  .hero-decoration {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    writing-mode: vertical-rl;
+    opacity: 0;
+    animation: fadeIn 2s ease 1.2s forwards;
+  }
+
+  @media (max-width: 900px) {
+    .hero-decoration { display: none; }
+    .hero { padding: 110px 24px 60px; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ===== SECTION ===== */
+  section {
+    padding: 120px 40px;
+    max-width: var(--maxw);
+    margin: 0 auto;
+  }
+
+  @media (max-width: 720px) {
+    section { padding: 80px 24px; }
+  }
+
+  .section-header {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 60px;
+    align-items: baseline;
+    margin-bottom: 80px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  @media (max-width: 720px) {
+    .section-header {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--ochre);
+  }
+
+  /* ===== ABOUT ===== */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 60px;
+  }
+
+  @media (max-width: 720px) {
+    .about-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  .about-side {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 2;
+  }
+
+  .about-side div { padding: 4px 0; border-bottom: 1px solid var(--rule); }
+
+  .about-prose p {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(20px, 2.2vw, 26px);
+    line-height: 1.5;
+    margin-bottom: 24px;
+    color: var(--ink-soft);
+  }
+
+  .about-prose p:first-child::first-letter {
+    font-family: var(--display);
+    font-size: 5em;
+    line-height: 0.85;
+    float: left;
+    padding-right: 14px;
+    padding-top: 8px;
+    font-weight: 400;
+    color: var(--terracotta);
+    font-style: italic;
+  }
+
+  .about-prose em {
+    font-style: italic;
+    color: var(--terracotta);
+  }
+
+  .about-prose strong {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* ===== PULL QUOTE ===== */
+  .pull {
+    margin: 100px 0;
+    padding: 0 40px;
+    text-align: center;
+  }
+
+  .pull-text {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--navy);
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .pull-text::before, .pull-text::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 1px;
+    background: var(--ochre);
+    margin: 32px auto;
+  }
+
+  /* ===== WORK ===== */
+  .work-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .work-item {
+    padding: 40px 0;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+    align-items: start;
+    transition: padding-left .4s ease;
+    position: relative;
+  }
+
+  .work-item:hover { padding-left: 16px; }
+
+  .work-item:hover .work-arrow { transform: translateX(8px); opacity: 1; }
+
+  .work-item:last-child { border-bottom: 1px solid var(--rule); }
+
+  @media (max-width: 720px) {
+    .work-item { grid-template-columns: 1fr; gap: 12px; padding: 32px 0; }
+  }
+
+  .work-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .work-meta strong { color: var(--ink); display: block; font-weight: 500; }
+
+  .work-content h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(26px, 3vw, 36px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 18px;
+  }
+
+  .work-content h3 em { font-style: italic; color: var(--ochre); }
+
+  .work-content p {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    max-width: 720px;
+  }
+
+  .work-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .work-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 5px 10px;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    text-transform: uppercase;
+    background: rgba(255,255,255,.3);
+  }
+
+  .work-arrow {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    font-family: var(--display);
+    font-size: 28px;
+    color: var(--ochre);
+    opacity: 0;
+    transition: all .3s ease;
+  }
+
+  /* ===== PROJECTS ===== */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  @media (max-width: 720px) {
+    .projects-grid { grid-template-columns: 1fr; }
+  }
+
+  .project {
+    background: var(--paper);
+    padding: 40px;
+    transition: background .3s ease;
+    position: relative;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .project:hover { background: var(--paper-warm); }
+
+  .project-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ochre);
+    margin-bottom: 16px;
+  }
+
+  .project h4 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  .project-sub {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--terracotta);
+    margin-bottom: 18px;
+    font-weight: 300;
+  }
+
+  .project p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    flex-grow: 1;
+  }
+
+  .project-stack {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tl-item {
+    display: grid;
+    grid-template-columns: 140px 1fr 240px;
+    gap: 40px;
+    padding: 24px 0;
+    border-top: 1px solid var(--rule);
+    align-items: baseline;
+  }
+
+  .tl-item:last-child { border-bottom: 1px solid var(--rule); }
+
+  @media (max-width: 720px) {
+    .tl-item {
+      grid-template-columns: 1fr;
+      gap: 4px;
+      padding: 20px 0;
+    }
+  }
+
+  .tl-year {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+
+  .tl-role {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+
+  .tl-org {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  @media (max-width: 720px) {
+    .tl-org { text-align: left; }
+  }
+
+  /* ===== CREDENTIALS ===== */
+  .credentials {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-top: 60px;
+  }
+
+  @media (max-width: 720px) {
+    .credentials { grid-template-columns: 1fr; }
+  }
+
+  .cred {
+    background: var(--paper);
+    padding: 32px;
+  }
+
+  .cred-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ochre);
+    margin-bottom: 12px;
+  }
+
+  .cred-content {
+    font-family: var(--display);
+    font-size: 19px;
+    line-height: 1.35;
+    font-weight: 400;
+  }
+
+  .cred-content em { font-style: italic; color: var(--muted); display: block; font-size: 14px; margin-top: 4px; }
+
+  /* ===== CONTACT ===== */
+  .contact {
+    text-align: center;
+    padding: 140px 40px 80px;
+  }
+
+  .contact-eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  .contact h2 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(48px, 8vw, 96px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 48px;
+  }
+
+  .contact h2 em { font-style: italic; color: var(--terracotta); }
+
+  .contact-link {
+    font-family: var(--display);
+    font-size: clamp(24px, 3vw, 32px);
+    color: var(--navy);
+    border-bottom: 1px solid var(--ochre);
+    padding-bottom: 4px;
+    display: inline-block;
+    margin-bottom: 40px;
+  }
+
+  .contact-meta {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 24px;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 32px 40px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    max-width: var(--maxw);
+    margin: 0 auto;
+  }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .9s ease, transform .9s ease;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a href="#top" class="nav-mark">Aaron <span>Wilkinson</span></a>
+  <nav class="nav-links">
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-eyebrow">Phoenix, AZ &nbsp;·&nbsp; est. 2009</div>
+    <h1>
+      <span class="first">Aaron</span>
+      <span class="last">Wilkinson.</span>
+    </h1>
+    <p class="hero-tag">
+      Finance, data, and the <em>tools between them.</em> Fifteen years across banking, wealth management, fintech product, and platform engineering — building the systems finance teams actually run on.
+    </p>
+    <div class="hero-meta">
+      <div>Currently <span>Cardone Ventures</span></div>
+      <div>Discipline <span>Finance · Data · Software</span></div>
+      <div>Stack <span>Fabric · Azure · React · Swift</span></div>
+    </div>
+    <div class="hero-decoration">↓ &nbsp;&nbsp; SCROLL</div>
+  </section>
+
+  <section id="about">
+    <div class="section-header">
+      <div class="section-num">§ 01 — About</div>
+      <h2 class="section-title">A career built by <em>teaching myself</em> the next layer.</h2>
+    </div>
+    <div class="about-grid">
+      <aside class="about-side">
+        <div>Banking</div>
+        <div>Wealth Mgmt</div>
+        <div>Fintech Product</div>
+        <div>Data Platform</div>
+        <div>Full-Stack</div>
+      </aside>
+      <div class="about-prose">
+        <p>I started in banking in Alaska in 2009, working my way through a management associate program at First National Bank of Alaska, into a loan officer seat in Soldotna, and then into a branch manager role in Sitka before I was thirty. I learned how money actually moves through real systems by sitting across desks from the people borrowing and lending it.</p>
+        <p>From there I went to <strong>Merrill Lynch</strong>, passed the Series 7, 66, and 63, and worked as a financial advisor in Anchorage. Then to <strong>Empirical Wealth Management</strong>, a fee-only RIA, where the work was more aligned with how I think about a client's interests. Somewhere in there I finished an MBA at the University of Maryland.</p>
+        <p>In 2018 I went independent, and three years of consulting eventually landed me at <strong>equipifi</strong>, where I went from contractor to Lead Product Manager for Underwriting. I built their consumer underwriting model from scratch — algorithms, data mappings to five core banking systems, point-of-sale credit decisioning. It was the first time I had to learn the technical stack as deeply as the financial logic, and it changed how I work.</p>
+        <p>Today I'm at <strong>Cardone Ventures</strong>, functioning as a one-person data department inside the finance function. I write the SQL, design the Power BI, ship the React, and stand up the Azure infrastructure. Finance fluency, full-stack execution, <em>no translation layer.</em></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="pull">
+    <p class="pull-text">"I'd rather build the thing than draw a picture of the thing."</p>
+  </div>
+
+  <section id="work">
+    <div class="section-header">
+      <div class="section-num">§ 02 — Selected Work</div>
+      <h2 class="section-title">Production work, <em>built and shipped.</em></h2>
+    </div>
+
+    <div class="work-list">
+
+      <article class="work-item">
+        <div class="work-meta">
+          <strong>Cardone Ventures</strong>
+          2024 — Present<br>
+          Finance Operations
+        </div>
+        <div class="work-content">
+          <h3>The internal <em>operating system</em> for finance and business services.</h3>
+          <p>Functioning as a one-person data department, I own the analytics platform, executive reporting, and a growing suite of internal applications used daily by leadership and the business services team. Six production apps shipped, a Microsoft Fabric warehouse stood up, and a 12-month platform architecture roadmap authored from scratch.</p>
+          <p>Highlights include the <strong>Client Financial Package</strong> (a 24-view React app simulating P&amp;L, balance sheet, cash flow, breakeven, and ODE across five client profiles), the <strong>Business Services Customer View Hub</strong>, the <strong>Fabric NL Query App</strong> (natural-language to T-SQL with an Azure Functions backend), and the <strong>QBO Categorizer</strong> for programmatic chart-of-accounts work via QuickBooks Online's API.</p>
+          <div class="work-tags">
+            <span class="work-tag">Microsoft Fabric</span>
+            <span class="work-tag">Power BI / DAX</span>
+            <span class="work-tag">React / Vite</span>
+            <span class="work-tag">Azure Functions</span>
+            <span class="work-tag">T-SQL</span>
+            <span class="work-tag">MCP Server</span>
+          </div>
+          <span class="work-arrow">→</span>
+        </div>
+      </article>
+
+      <article class="work-item">
+        <div class="work-meta">
+          <strong>equipifi</strong>
+          2022 — 2024<br>
+          Lead PM, Underwriting
+        </div>
+        <div class="work-content">
+          <h3>Built a consumer underwriting model <em>from zero</em> for a credit union BNPL platform.</h3>
+          <p>Came in as a contractor, converted to full-time, and architected the underwriting system that decisions debit-card transactions in real time and offers an installment loan at the point of sale. Designed the algorithms for calculating debt repayment ability from a member's financial profile, then built the data mappings to five separate core banking systems to make the model work in production.</p>
+          <p>This is where I traded "advisor who builds spreadsheets" for "PM who reads JSON between Kubernetes pods at midnight." Got hands-on with AWS, JWT debugging, QuickSight dashboards, and SQL deep enough to support real underwriting analytics.</p>
+          <div class="work-tags">
+            <span class="work-tag">Underwriting</span>
+            <span class="work-tag">AWS / Kubernetes</span>
+            <span class="work-tag">QuickSight</span>
+            <span class="work-tag">SQL</span>
+            <span class="work-tag">Banking APIs</span>
+          </div>
+          <span class="work-arrow">→</span>
+        </div>
+      </article>
+
+      <article class="work-item">
+        <div class="work-meta">
+          <strong>Wilkinson Consulting</strong>
+          2018 — 2022<br>
+          Independent
+        </div>
+        <div class="work-content">
+          <h3>Three years going independent, retooling for what came next.</h3>
+          <p>Took on product, finance, and data work as a sole proprietor. Used the time to teach myself SQL, Python, data architecture, and the kind of software thinking that doesn't come standard with a finance background. The final engagement with equipifi started here as a three-month contract before converting to full time.</p>
+          <span class="work-arrow">→</span>
+        </div>
+      </article>
+
+      <article class="work-item">
+        <div class="work-meta">
+          <strong>Empirical Wealth Mgmt</strong>
+          2017 — 2018<br>
+          Financial Advisor
+        </div>
+        <div class="work-content">
+          <h3>Fee-only RIA work, fiduciary by structure.</h3>
+          <p>Advised clients on financial planning, investment management, and portfolio construction at a Seattle-based RIA serving high-net-worth individuals and families. Held concurrent registration with Directional Financial Services for a specific client segment.</p>
+          <span class="work-arrow">→</span>
+        </div>
+      </article>
+
+      <article class="work-item">
+        <div class="work-meta">
+          <strong>Merrill Lynch</strong>
+          2014 — 2017<br>
+          Financial Advisor
+        </div>
+        <div class="work-content">
+          <h3>Practice Management Development, then a book of my own.</h3>
+          <p>Selected for Merrill's PMD program. Passed Series 7, Series 66, and Series 63 in the first months, then promoted to Financial Advisor and built a book from scratch. Learned how to talk to people about money in a way that respects what's actually at stake for them.</p>
+          <span class="work-arrow">→</span>
+        </div>
+      </article>
+
+      <article class="work-item">
+        <div class="work-meta">
+          <strong>First National Bank Alaska</strong>
+          2009 — 2013<br>
+          Branch Mgr → Loan Officer → MA
+        </div>
+        <div class="work-content">
+          <h3>Where I learned how money <em>actually moves.</em></h3>
+          <p>Three roles in four years across multiple Alaska branches. Branch Manager in Sitka running full operations. Loan Officer in Soldotna underwriting consumer and small-business credit. Started in the Management Associate rotational program. The foundation everything else rests on.</p>
+          <span class="work-arrow">→</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-header">
+      <div class="section-num">§ 03 — Personal Projects</div>
+      <h2 class="section-title">What I build when <em>nobody's asking.</em></h2>
+    </div>
+
+    <div class="projects-grid">
+
+      <article class="project">
+        <div class="project-num">PROJECT — 01</div>
+        <h4>Pulse</h4>
+        <div class="project-sub">An AI CFO for small business — iOS</div>
+        <p>Native Swift &amp; SwiftUI app with QuickBooks Online OAuth, Claude API briefings, Supabase persistence, StoreKit 2, Plaid, and a 28-platform connections hub. Built for solo operators who can't afford a fractional CFO but still need one.</p>
+        <div class="project-stack">Swift · SwiftUI · Claude API · Supabase</div>
+      </article>
+
+      <article class="project">
+        <div class="project-num">PROJECT — 02</div>
+        <h4>VaultSync</h4>
+        <div class="project-sub">Personal account aggregator — no Plaid required</div>
+        <p>Puppeteer-based headless scraping with a Node/Express backend, SQLite, and AES-256-GCM encryption. Custom connectors including a dedicated one for the Alkami ORB platform. Direct connections to my own accounts without paying a third party.</p>
+        <div class="project-stack">Node · Puppeteer · SQLite · AES-GCM</div>
+      </article>
+
+      <article class="project">
+        <div class="project-num">PROJECT — 03</div>
+        <h4>Genesis Studio</h4>
+        <div class="project-sub">Local AI video generation — Apple Silicon</div>
+        <p>React frontend with a Python FastAPI backend wrapping HuggingFace Diffusers, optimized for the MPS backend on a 2023 MacBook Pro. Built to run wan22-5b without a cloud bill.</p>
+        <div class="project-stack">React · FastAPI · Diffusers · MPS</div>
+      </article>
+
+      <article class="project">
+        <div class="project-num">PROJECT — 04</div>
+        <h4>Polymarket Framework</h4>
+        <div class="project-sub">Algorithmic trading research</div>
+        <p>Python framework covering arbitrage, market making, event-driven, and model-based strategies. Risk governance and execution layers built in. Started as curiosity, became a serious sandbox.</p>
+        <div class="project-stack">Python · Pandas · Async · Risk Mgmt</div>
+      </article>
+
+      <article class="project">
+        <div class="project-num">PROJECT — 05</div>
+        <h4>Peptide Pal</h4>
+        <div class="project-sub">SwiftUI supplement protocol tracker</div>
+        <p>Dose logging, reconstitution calculator, inventory tracking, and a built-in peptide reference library. Deployed via XcodeGen and Fastlane. Niche, but useful for the people who use it.</p>
+        <div class="project-stack">SwiftUI · XcodeGen · Fastlane</div>
+      </article>
+
+      <article class="project">
+        <div class="project-num">PROJECT — 06</div>
+        <h4>Internal MCP Server</h4>
+        <div class="project-sub">Custom company-data layer for AI</div>
+        <p>An MCP server exposing company data and a custom learning layer to AI assistants. Lets me query and reason over internal information conversationally instead of pulling reports manually.</p>
+        <div class="project-stack">MCP · TypeScript · Custom Embeddings</div>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="credentials">
+    <div class="section-header">
+      <div class="section-num">§ 04 — Credentials</div>
+      <h2 class="section-title">Education &amp; <em>licensing.</em></h2>
+    </div>
+    <div class="credentials">
+      <div class="cred">
+        <div class="cred-label">Graduate</div>
+        <div class="cred-content">
+          Master of Business Administration
+          <em>University of Maryland · 2014</em>
+        </div>
+      </div>
+      <div class="cred">
+        <div class="cred-label">Undergraduate</div>
+        <div class="cred-content">
+          B.S. Political Science &amp; Economics
+          <em>Western Washington University · 2009</em>
+        </div>
+      </div>
+      <div class="cred">
+        <div class="cred-label">FINRA</div>
+        <div class="cred-content">
+          Series 7 · 66 · 63
+          <em>Held while registered · CRD #6365152</em>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="contact-eyebrow">§ 05 — Contact</div>
+    <h2>Let's <em>talk.</em></h2>
+    <a class="contact-link" href="mailto:aaronjohnwilkinson@gmail.com">aaronjohnwilkinson@gmail.com</a>
+    <div class="contact-meta">
+      <div>Phoenix, AZ</div>
+      <div>(907) 529-0883</div>
+      <div>Open to: Director / Principal IC roles</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>© 2026 Aaron Wilkinson</div>
+  <div>Built by hand · No frameworks</div>
+</footer>
+
+<script>
+  // Subtle reveal-on-scroll for sections after the hero
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('section, .pull').forEach(el => {
+    el.classList.add('reveal');
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
