@@ -69,6 +69,17 @@ a:focus-visible{outline:2px solid var(--glacier);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.hero h1,.hero p,.facts{animation:none}}
 html{scroll-behavior:smooth}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* easter egg */
+.snake{position:fixed;inset:0;z-index:200;background:rgba(13,18,22,.94);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;font-family:var(--mono);color:var(--ink2)}
+.snake.on{display:flex}
+.snake canvas{border:1px solid var(--line);background:var(--bg2);box-shadow:0 40px 80px -30px rgba(0,0,0,.8);max-width:92vw;max-height:70vh}
+.snake .hud{display:flex;gap:28px;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.snake .hud b{color:var(--copper);font-weight:500}
+.snake .hint{font-size:11px;color:var(--mute);letter-spacing:.06em;text-transform:uppercase;text-align:center;padding:0 20px}
+.snake .pad{display:none;gap:8px;margin-top:6px}
+.snake .pad button{width:56px;height:44px;background:var(--bg2);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:16px}
+@media(hover:none){.snake .pad{display:flex}}
 </style></head><body>
 <div class="wrap">
 <header class="top"><a class="mark" href="#">Aaron <i>Wilkinson</i></a><nav><a href="#about">About</a><a href="#work">Work</a><a href="#projects">Projects</a><a href="#contact">Contact</a></nav></header>
@@ -110,4 +121,54 @@ html{scroll-behavior:smooth}
 <section id="contact" class="contact"><h2>Say <span>hello.</span></h2>
 <div class="links"><a href="mailto:aaronjohnwilkinson@gmail.com">aaronjohnwilkinson@gmail.com</a><a href="https://github.com/AJWilkinson85">GitHub</a><a href="https://www.adeptadvisors.com">Adept Advisors</a></div></section>
 <footer><div>© 2026 Aaron Wilkinson</div><div>Built by hand · No frameworks</div></footer>
-</div></body></html>
+</div>
+<div class="snake" id="snake" role="dialog" aria-label="Snake">
+  <div class="hud"><span>Score <b id="sk-score">0</b></span><span>Best <b id="sk-best">0</b></span></div>
+  <canvas id="sk" width="480" height="480"></canvas>
+  <div class="pad"><button data-d="0,-1">&#8593;</button><button data-d="-1,0">&#8592;</button><button data-d="0,1">&#8595;</button><button data-d="1,0">&#8594;</button></div>
+  <div class="hint">Arrows or WASD to move · Space to pause · Esc to close · You found the ledger's other use</div>
+</div>
+<script>
+(()=>{
+  const mark=document.querySelector('.top .mark');
+  const box=document.getElementById('snake'), cv=document.getElementById('sk'), cx=cv.getContext('2d');
+  const scoreEl=document.getElementById('sk-score'), bestEl=document.getElementById('sk-best');
+  const N=24, S=cv.width/N; let snake, dir, next, food, score, best=0, timer=null, paused=false, dead=false;
+  try{best=+localStorage.getItem('sk-best')||0}catch(e){} bestEl.textContent=best;
+  const rnd=()=>({x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)});
+  function spawn(){do{food=rnd()}while(snake.some(s=>s.x===food.x&&s.y===food.y))}
+  function reset(){snake=[{x:12,y:12},{x:11,y:12},{x:10,y:12}];dir={x:1,y:0};next=dir;score=0;dead=false;paused=false;scoreEl.textContent=0;spawn();draw()}
+  function draw(){
+    cx.fillStyle='#131B22';cx.fillRect(0,0,cv.width,cv.height);
+    cx.strokeStyle='#243039';cx.lineWidth=1;cx.beginPath();for(let i=0;i<=N;i++){cx.moveTo(i*S+.5,0);cx.lineTo(i*S+.5,cv.height);cx.moveTo(0,i*S+.5);cx.lineTo(cv.width,i*S+.5)}cx.stroke();
+    cx.fillStyle='#7FB8CC';cx.fillRect(food.x*S+3,food.y*S+3,S-6,S-6);
+    snake.forEach((s,i)=>{cx.fillStyle=i?'#E4E9ED':'#D4894B';cx.fillRect(s.x*S+2,s.y*S+2,S-4,S-4)});
+    if(dead||paused){cx.fillStyle='rgba(13,18,22,.7)';cx.fillRect(0,0,cv.width,cv.height);cx.fillStyle='#E4E9ED';cx.font='700 28px Archivo, Impact, sans-serif';cx.textAlign='center';cx.fillText(dead?'CLOSED OUT':'PAUSED',cv.width/2,cv.height/2-6);cx.font='12px "IBM Plex Mono", monospace';cx.fillStyle='#A7B3BD';cx.fillText(dead?'Score '+score+' · press Enter to reconcile':'Space to resume',cv.width/2,cv.height/2+22)}
+  }
+  function step(){
+    if(paused||dead)return; dir=next;
+    const h={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+    if(h.x<0||h.y<0||h.x>=N||h.y>=N||snake.some(s=>s.x===h.x&&s.y===h.y)){dead=true;if(score>best){best=score;bestEl.textContent=best;try{localStorage.setItem('sk-best',best)}catch(e){}}draw();return}
+    snake.unshift(h);
+    if(h.x===food.x&&h.y===food.y){score++;scoreEl.textContent=score;spawn()}else snake.pop();
+    draw();
+  }
+  function turn(x,y){if(x===-dir.x&&y===-dir.y)return;next={x,y}}
+  function open(){box.classList.add('on');document.body.style.overflow='hidden';reset();clearInterval(timer);timer=setInterval(step,110)}
+  function close(){box.classList.remove('on');document.body.style.overflow='';clearInterval(timer);timer=null}
+  let clicks=0,ct=0;
+  mark.addEventListener('click',e=>{const t=Date.now();clicks=(t-ct<500)?clicks+1:1;ct=t;if(clicks>=3){clicks=0;e.preventDefault();open()}});
+  document.addEventListener('keydown',e=>{
+    if(!box.classList.contains('on'))return;
+    const k=e.key;
+    if(k==='Escape')return close();
+    if(k===' '){e.preventDefault();if(!dead){paused=!paused;draw()}return}
+    if(k==='Enter'&&dead){reset();return}
+    const m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0],W:[0,-1],S:[0,1],A:[-1,0],D:[1,0]}[k];
+    if(m){e.preventDefault();turn(m[0],m[1])}
+  });
+  box.querySelectorAll('.pad button').forEach(b=>b.addEventListener('click',()=>{const[x,y]=b.dataset.d.split(',').map(Number);if(dead)reset();else turn(x,y)}));
+  box.addEventListener('click',e=>{if(e.target===box)close()});
+})();
+</script>
+</body></html>
